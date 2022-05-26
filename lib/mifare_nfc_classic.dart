@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
 
 class MifareNfcClassic {
   static const MethodChannel _channel = const MethodChannel('mifare_nfc_classic');
@@ -14,7 +13,7 @@ class MifareNfcClassic {
       'blockIndex': blockIndex,
       'password': password,
     });
-    Logger().i(response);
+
     return response as String;
   }
 
@@ -23,12 +22,11 @@ class MifareNfcClassic {
     required String message,
     String? password,
   }) async {
-    final response = await _channel.invokeMethod('writeBlock', {
+    await _channel.invokeMethod('writeBlock', {
       'blockIndex': blockIndex,
       'message': message,
       'password': password,
     });
-    Logger().i(response);
   }
 
   static Future<Map<String, dynamic>> overwriteBlock({
@@ -41,7 +39,7 @@ class MifareNfcClassic {
       'message': message,
       'password': password,
     });
-    Logger().i(response);
+
     return Map<String, dynamic>.from(response);
   }
 
@@ -50,8 +48,7 @@ class MifareNfcClassic {
     required String newPassword,
     String? password,
   }) async {
-    final response = await _channel.invokeMethod('changePasswordOfSector', {'sectorIndex': sectorIndex, 'newPassword': newPassword, 'password': password});
-    Logger().i(response);
+    await _channel.invokeMethod('changePasswordOfSector', {'sectorIndex': sectorIndex, 'newPassword': newPassword, 'password': password});
   }
 
   static Future<void> writeRawHexToBlock({
@@ -59,7 +56,7 @@ class MifareNfcClassic {
     required String message,
     String? password,
   }) async {
-    final response = await _channel.invokeMethod(
+    await _channel.invokeMethod(
       'writeRawHexToBlock',
       {
         'blockIndex': blockIndex,
@@ -67,7 +64,6 @@ class MifareNfcClassic {
         'password': password,
       },
     );
-    Logger().i(response);
   }
 
   static Future<List<String>> readSector({required int sectorIndex, String? password}) async {
@@ -75,14 +71,13 @@ class MifareNfcClassic {
       'sectorIndex': sectorIndex,
       'password': password,
     });
-    Logger().i(response);
 
     return List<String>.from(response);
   }
 
   static Future<int> get sectorCount async {
     final count = await _channel.invokeMethod('sectorCount');
-    Logger().i(count);
+
     return count;
   }
 
@@ -92,19 +87,19 @@ class MifareNfcClassic {
     }) as Map<dynamic, dynamic>;
     final listOfSectors = <List<String>>[];
     response.forEach((_, list) => listOfSectors.add(List<String>.from(list)));
-    Logger().i(listOfSectors);
+
     return listOfSectors;
   }
 
   static Future<int> get blockCount async {
     final count = await _channel.invokeMethod('blockCount');
-    Logger().i(count);
+
     return count;
   }
 
   static Future<AVAILABILITY> get availability async {
     final response = _decodeMessage(await _channel.invokeMethod('isNFCEnabled'));
-    Logger().i(response);
+
     return response;
   }
 
